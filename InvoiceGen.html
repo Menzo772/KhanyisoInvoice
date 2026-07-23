@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Generator</title>
+<style>
+  :root {
+    --ink: #111111;
+    --line: #d9d9d9;
+    --paper: #ffffff;
+    --bg: #f2f2f2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 24px;
+  }
+
+  .invoice-shell {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--paper);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 36px 42px;
+  }
+
+  .invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+
+  .logo-box {
+    width: 140px;
+    height: 88px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fafafa, #f0f0f0);
+    overflow: hidden;
+  }
+
+  .logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 6px;
+    background: #fff;
+  }
+
+  .eyebrow {
+    margin: 0 0 6px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #777;
+    font-weight: 700;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .invoice-meta {
+    display: grid;
+    gap: 8px;
+    min-width: 220px;
+  }
+
+  .invoice-meta label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #555;
+    gap: 8px;
+  }
+
+  .billing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .billing-block {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: #fcfcfc;
+  }
+
+  .billing-block h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    padding: 8px 0;
+    margin-bottom: 8px;
+    background: transparent;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+  }
+
+  input:focus {
+    border-bottom-color: var(--ink);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  thead th {
+    text-align: left;
+    padding: 10px 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #666;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  tbody td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+
+  .description { width: 100%; }
+  .qty, .price { width: 100%; text-align: right; }
+  .rowTotal { text-align: right; font-weight: 600; min-width: 90px; }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    gap: 12px;
+  }
+
+  button {
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  .secondary {
+    background: #f0f0f0;
+    color: var(--ink);
+  }
+
+  .primary {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .totals {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .total-label {
+    font-size: 15px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .total-value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .payment-section {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .payment-details {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+  }
+
+  .signature-box {
+    width: 220px;
+    min-height: 100px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @media print {
+    body {
+      background: #fff;
+      padding: 0;
+    }
+
+    .invoice-shell {
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      max-width: none;
+    }
+
+    .actions {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="invoice-shell">
+    <header class="invoice-header">
+      <div class="logo-box">
+        <img src="file:///C:/Users/menzo/file_000000009b606246aa90ebf3848efecb.png" alt="Company logo">
+      </div>
+      <div>
+        <p class="eyebrow">Invoice</p>
+        <h1>Invoice </h1>
+      </div>
+      <div class="invoice-meta">
+        <label>Invoice No <input id="invoiceNo" value="INV-001"></label>
+        <label>Date <input type="date" id="invoiceDate"></label>
+      </div>
+    </header>
+
+    <section class="billing-grid">
+      <div class="billing-block">
+        <h3>From</h3>
+        <input id="company" value="MoloTrans">
+        <input id="address" value="78 Krige Street, PeerlessPark North,7570">
+        <input id="phone" value="0618518225">
+      </div>
+      <div class="billing-block">
+        <h3>Bill To</h3>
+        <input id="customerName" placeholder="Customer Name">
+        <input id="customerAddress" placeholder="Customer Address">
+      </div>
+    </section>
+
+    <table id="items">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th style="width: 90px;">Qty</th>
+          <th style="width: 120px;">Price</th>
+          <th style="width: 110px;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input class="description" placeholder="Item description"></td>
+          <td><input class="qty" type="number" value="1"></td>
+          <td><input class="price" type="number" value="0"></td>
+          <td class="rowTotal">0.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <button class="secondary" onclick="addRow()">Add Item</button>
+      <button class="primary" onclick="window.print()">Print Invoice</button>
+    </div>
+
+    <div class="totals">
+      <div class="total-label">Grand Total</div>
+      <div class="total-value">R<span id="grandTotal">0.00</span></div>
+    </div>
+
+    <div class="payment-section">
+      <div class="payment-details">
+        <strong>Payment Details</strong><br>
+        Bank: CAPITEC BUSINESS<br>
+        Account: 6284 0123 4567<br>
+        Reference: <span id="paymentReference">INV-001</span>
+      </div>
+      <div class="signature-box">Signature</div>
+    </div>
+  </div>
+
+  <script>
+    function addRow() {
+      let table = document.getElementById("items");
+      let body = table.querySelector("tbody");
+      let row = body.insertRow();
+
+      row.innerHTML = `
+        <td><input class="description" placeholder="Item description"></td>
+        <td><input class="qty" type="number" value="1"></td>
+        <td><input class="price" type="number" value="0"></td>
+        <td class="rowTotal">0.00</td>
+      `;
+
+      attachEvents();
+    }
+
+    function attachEvents() {
+      let qty = document.querySelectorAll(".qty");
+      let price = document.querySelectorAll(".price");
+
+      qty.forEach(q => {
+        q.oninput = calculate;
+      });
+
+      price.forEach(p => {
+        p.oninput = calculate;
+      });
+    }
+
+    function updatePaymentReference() {
+      const invoiceNo = document.getElementById("invoiceNo");
+      const paymentReference = document.getElementById("paymentReference");
+
+      if (invoiceNo && paymentReference) {
+        paymentReference.textContent = invoiceNo.value || "INV-001";
+      }
+    }
+
+    function calculate() {
+      let rows = document.querySelectorAll("#items tbody tr");
+      let grand = 0;
+
+      rows.forEach(row => {
+        let qty = parseFloat(row.querySelector(".qty").value || 0);
+        let price = parseFloat(row.querySelector(".price").value || 0);
+        let total = qty * price;
+
+        row.querySelector(".rowTotal").innerHTML = total.toFixed(2);
+        grand += total;
+      });
+
+      document.getElementById("grandTotal").innerHTML = grand.toFixed(2);
+    }
+
+    attachEvents();
+    document.getElementById("invoiceNo").addEventListener("input", updatePaymentReference);
+    updatePaymentReference();
+  </script>
+</body>
+</html>
