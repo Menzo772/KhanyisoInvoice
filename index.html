@@ -321,9 +321,7 @@
         Account: 6310 7905 531<br>
         Reference: <span id="paymentReference">INV-001</span>
       </div>
-      <div class="signature-box">Signature <br>
-        Date Signed <br>
-      <span id="invoiceDate">INV-001</span></div>
+      <div class="signature-box">Signature <br></div>
       
     </div>
   </div>
@@ -361,12 +359,14 @@
       const invoiceNo = document.getElementById("invoiceNo");
       const paymentReference = document.getElementById("paymentReference");
       const signedDate = document.getElementById("invoiceDate");
+      const today = new Date().toISOString().split("T")[0];
 
       if (invoiceNo && paymentReference) {
         paymentReference.textContent = invoiceNo.value || "INV-001";
       }
       if(signedDate){
-        signedDate.textContent = signedDate.Value;
+        signedDate.textContent = signedDate.value || today;
+      }
     }
 
     function calculate() {
