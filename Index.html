@@ -256,7 +256,7 @@
   <div class="invoice-shell">
     <header class="invoice-header">
       <div class="logo-box">
-        <img src="file:///C:/Users/menzo/file_000000009b606246aa90ebf3848efecb.png" alt="Company logo">
+        <img src="07338_Mfuda Transport Services Letterhead.png" alt="Company logo">
       </div>
       <div>
         <p class="eyebrow">Invoice</p>
@@ -271,14 +271,17 @@
     <section class="billing-grid">
       <div class="billing-block">
         <h3>From</h3>
-        <input id="company" value="MoloTrans">
-        <input id="address" value="78 Krige Street, PeerlessPark North,7570">
-        <input id="phone" value="0618518225">
+        <input id="company" value="Mguda Transport Services">
+        <input id="address" value="17 Grove Walk, Claremont, Cape Town">
+        <input id="phone" value="061 331 3686"> 
+        <input id="email" value="khanyisomguda37@gmail.com"> 
       </div>
       <div class="billing-block">
         <h3>Bill To</h3>
         <input id="customerName" placeholder="Customer Name">
         <input id="customerAddress" placeholder="Customer Address">
+         <input id="customerPhoneNumber" placeholder="Customer PhoneNumber">
+        <input id="customerEmail" placeholder="Customer Email">
       </div>
     </section>
 
@@ -314,11 +317,14 @@
     <div class="payment-section">
       <div class="payment-details">
         <strong>Payment Details</strong><br>
-        Bank: CAPITEC BUSINESS<br>
-        Account: 6284 0123 4567<br>
+        Bank: FNB<br>
+        Account: 6310 7905 531<br>
         Reference: <span id="paymentReference">INV-001</span>
       </div>
-      <div class="signature-box">Signature</div>
+      <div class="signature-box">Signature <br>
+        Date Signed <br>
+      <span id="invoiceDate">INV-001</span></div>
+      
     </div>
   </div>
 
@@ -347,17 +353,20 @@
       });
 
       price.forEach(p => {
-        p.oninput = calculate;
+        p.oninput = calculate; 
       });
     }
 
     function updatePaymentReference() {
       const invoiceNo = document.getElementById("invoiceNo");
       const paymentReference = document.getElementById("paymentReference");
+      const signedDate = document.getElementById("invoiceDate");
 
       if (invoiceNo && paymentReference) {
         paymentReference.textContent = invoiceNo.value || "INV-001";
       }
+      if(signedDate){
+        signedDate.textContent = signedDate.Value;
     }
 
     function calculate() {
